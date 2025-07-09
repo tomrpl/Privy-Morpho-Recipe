@@ -243,7 +243,7 @@ const ARBITRUM_CHAIN_ID = 42161; // Different chain
 - **[Base Documentation](https://docs.base.org)**: Layer 2 network details
 
 ### Community
-- **[Privy Discord](https://discord.gg/privy)**: Developer support and discussions
+- **[Privy Dev Support](https://privy-developers.slack.com/join/shared_invite/zt-38tepciub-AV_qKZndFsKBmeskxBshlw#/shared-invite/email)**: Developer support and discussions
 - **[Morpho Discord](https://discord.gg/morpho)**: Protocol updates and community
 
 ## 🚀 Getting Started
