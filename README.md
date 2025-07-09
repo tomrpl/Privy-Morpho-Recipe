@@ -121,6 +121,21 @@ User Login → Approve USDC → Deposit to Vault → Earn Yield → Withdraw
 ### Transaction Flow
 <!-- Screenshot 2: Step-by-step transaction process from approval to deposit -->
 
+## 🎥 Demo Video
+
+### Interactive Demo
+<!-- Option 1: If you convert to GIF (recommended for continuous playback) -->
+![Privy Morpho Demo](privy-morpho-demo.gif)
+
+<!-- Option 2: GitHub native video support (click to play) -->
+https://user-images.githubusercontent.com/tomrpl/privy-morpho-demo.mov
+
+<!-- Option 3: HTML video tag (may not work in all GitHub environments) -->
+<video width="100%" controls loop muted>
+  <source src="privy-morpho-demo.mov" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 🛠️ Technical Implementation
 
 ### Core Components
