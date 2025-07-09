@@ -14,17 +14,17 @@ This repository is an **educational demonstration** designed to showcase integra
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [How It Works](#how-it-works)
-- [Key Integration Considerations](#key-integration-considerations)
-- [Screenshots](#screenshots)
-- [Technical Implementation](#technical-implementation)
-- [Security Considerations](#security-considerations)
-- [Extensibility](#extensibility)
-- [Resources](#resources)
-- [Getting Started](#getting-started)
-- [License](#license)
+- [Overview](#-overview)
+- [Prerequisites](#-prerequisites)
+- [How It Works](#-how-it-works)
+- [Key Integration Considerations](#-key-integration-considerations)
+- [Screenshots](#-screenshots)
+- [Technical Implementation](#-technical-implementation)
+- [Security Considerations](#-security-considerations)
+- [Extensibility](#-extensibility)
+- [Resources](#-resources)
+- [Getting Started](#-getting-started)
+- [License](#-license)
 
 ## 🎯 Overview
 
@@ -115,26 +115,16 @@ User Login → Approve USDC → Deposit to Vault → Earn Yield → Withdraw
 
 ## 📸 Screenshots
 
-### Application Interface
-<!-- Screenshot 1: Main application interface showing wallet connection and vault interaction -->
+### Log In:
+![Log In](public/steps/login.png)
 
-### Transaction Flow
-<!-- Screenshot 2: Step-by-step transaction process from approval to deposit -->
+Click on the Log In button, 
 
-## 🎥 Demo Video
+### Select your privy authentification method
+![Privy Authentication](public/steps/privy.png)
 
-### Interactive Demo
-<!-- Option 1: If you convert to GIF (recommended for continuous playback) -->
-![Privy Morpho Demo](privy-morpho-demo.gif)
-
-<!-- Option 2: GitHub native video support (click to play) -->
-https://user-images.githubusercontent.com/tomrpl/privy-morpho-demo.mov
-
-<!-- Option 3: HTML video tag (may not work in all GitHub environments) -->
-<video width="100%" controls loop muted>
-  <source src="privy-morpho-demo.mov" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+### Play with Morpho Vaults
+![Morpho Vaults](public/steps/vault-plugged.png)
 
 ## 🛠️ Technical Implementation
 
