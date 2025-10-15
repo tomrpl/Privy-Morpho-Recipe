@@ -1,11 +1,14 @@
 'use client';
 
 import { usePrivy } from '@privy-io/react-auth';
+import { useState } from 'react';
 import Image from 'next/image';
 import MorphoVaultComponent from '../components/MorphoVaultComponent';
+import MorphoMarketComponent from '../components/MorphoMarketComponent';
 
 export default function Home() {
   const { ready, authenticated, user, login, logout } = usePrivy();
+  const [activeTab, setActiveTab] = useState<'vault' | 'market'>('vault');
 
   if (!ready) {
     return (
@@ -76,8 +79,46 @@ export default function Home() {
         {/* Main Content */}
         {authenticated && user && (
           <div className="max-w-4xl mx-auto">
+            {/* Navigation Tabs */}
+            <div className="bg-white rounded-xl shadow-lg p-2 mb-6 max-w-lg mx-auto">
+              <div className="flex space-x-1">
+                <button
+                  onClick={() => setActiveTab('vault')}
+                  className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    activeTab === 'vault'
+                      ? 'bg-blue-500 text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  }`}
+                >
+                  🏦 USDC Vault
+                </button>
+                <button
+                  onClick={() => setActiveTab('market')}
+                  className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    activeTab === 'market'
+                      ? 'bg-purple-500 text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  }`}
+                >
+                  ⚡ WETH/USDC Market
+                </button>
+              </div>
+              <div className="mt-2 text-center">
+                <p className="text-xs text-gray-500">
+                  {activeTab === 'vault' 
+                    ? 'Earn yield by depositing USDC'
+                    : 'Supply WETH collateral, borrow USDC'
+                  }
+                </p>
+              </div>
+            </div>
             
-            <MorphoVaultComponent />
+            {/* Component Display */}
+            {activeTab === 'vault' ? (
+              <MorphoVaultComponent />
+            ) : (
+              <MorphoMarketComponent />
+            )}
           </div>
         )}
 
@@ -86,14 +127,14 @@ export default function Home() {
             <div className="bg-white rounded-xl shadow-lg p-8">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">Get Started</h2>
               <p className="text-gray-600 mb-6">
-                Connect your wallet to start earning yield on your USDC
+                Connect your wallet to access Morpho&apos;s yield and lending markets
               </p>
               <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
-                <p className="font-medium mb-2">What you&apos;ll need:</p>
+                <p className="font-medium mb-2">Available features:</p>
                 <ul className="space-y-1">
-                  <li>• USDC on Base network</li>
-                  <li>• A few clicks to start earning</li>
-                                     <li>• That&apos;s it! 🚀</li>
+                  <li>• 🏦 USDC Vault - Earn yield on USDC deposits</li>
+                  <li>• ⚡ WETH/USDC Market - Supply WETH, borrow USDC</li>
+                  <li>• 🚀 One-click transactions on Base network</li>
                 </ul>
               </div>
             </div>

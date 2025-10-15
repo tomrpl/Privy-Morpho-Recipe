@@ -1,5 +1,5 @@
 import { formatUnits, parseUnits } from 'viem';
-import { USDC_DECIMALS, VAULT_SHARES_DECIMALS, BASE_EXPLORER_URL } from './constants';
+import { USDC_DECIMALS, VAULT_SHARES_DECIMALS, ETH_DECIMALS, BASE_EXPLORER_URL } from './constants';
 
 /**
  * Format USDC amount for display
@@ -27,6 +27,20 @@ export function parseUsdcAmount(amount: string): bigint {
  */
 export function parseVaultShares(shares: string): bigint {
   return parseUnits(shares, VAULT_SHARES_DECIMALS);
+}
+
+/**
+ * Format ETH amount for display
+ */
+export function formatEthAmount(amount: bigint): string {
+  return formatUnits(amount, ETH_DECIMALS);
+}
+
+/**
+ * Parse ETH amount from string input
+ */
+export function parseEthAmount(amount: string): bigint {
+  return parseUnits(amount, ETH_DECIMALS);
 }
 
 /**
