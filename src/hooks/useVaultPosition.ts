@@ -86,13 +86,6 @@ export function useVaultPosition(vault: VaultInfo) {
     }
   }, [maxWithdrawUsd]);
 
-  // Auto-clear status after 10 seconds when not loading
-  useEffect(() => {
-    if (!status || isLoading) return;
-    const timer = setTimeout(() => resetTxState(), 10_000);
-    return () => clearTimeout(timer);
-  }, [status, isLoading, resetTxState]);
-
   const checkVaultSafety = useCallback(async () => {
     if (!selectedVaultAddress) return;
 

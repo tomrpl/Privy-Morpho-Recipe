@@ -4,6 +4,7 @@ import { type SimulationResult } from '@/lib/simulate';
 import { type TxStep } from '@/hooks/useMarketPosition';
 import { SimulationSummary } from './SimulationSummary';
 import { Button } from './ui/Button';
+import { Spinner } from './ui/Spinner';
 
 interface ReviewStepProps {
   actionSummary: string;
@@ -94,7 +95,7 @@ export function ReviewStep({
           disabled={isLoading}
         >
           {isLoading ? (
-            <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <Spinner />
           ) : (
             'Confirm'
           )}

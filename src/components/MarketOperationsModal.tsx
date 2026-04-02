@@ -11,20 +11,14 @@ import {
   parseTokenAmount,
   getExplorerTxUrl,
   isZero,
+  formatPercent,
 } from '@/lib/utils';
-import { WAD, SIMULATE_ONLY_SENTINEL } from '@/lib/constants';
+import { WAD, SIMULATE_ONLY_SENTINEL, BORROW_SAFETY_BUFFER, BORROW_SAFETY_DIVISOR, STATUS_STYLES } from '@/lib/constants';
 import { computeMaxBorrow, formatHealthFactor, getHealthColor, formatLiqPrice, computeLTV } from '@/lib/morphoMath';
 import { Button } from './ui/Button';
+import { Spinner } from './ui/Spinner';
 import { SimulationSummary } from './SimulationSummary';
 import { ReviewStep } from './ReviewStep';
-
-const statusStyles: Record<string, string> = {
-  success: 'bg-green-500/10 border border-green-500/20 text-green-400',
-  error: 'bg-red-500/10 border border-red-500/20 text-red-400',
-  processing: 'surface-elevated text-muted-foreground',
-  info: 'surface-elevated text-muted-foreground',
-  idle: 'surface-elevated text-muted-foreground',
-};
 
 interface MarketOperationsModalProps {
   marketKey: string;
@@ -105,7 +99,7 @@ export default function MarketOperationsModal({ marketKey }: MarketOperationsMod
         totalCollateral, oraclePrice, marketLltv,
         position?.borrowShares ?? 0n, marketBorrowData.totalAssets, marketBorrowData.totalShares,
       );
-      const safe = raw * 950n / 1000n;
+      const safe = raw * BORROW_SAFETY_BUFFER / BORROW_SAFETY_DIVISOR;
       return Math.max(0, parseFloat(formatTokenAmount(safe, loanDecimals)));
     } catch { return null; }
   }, [oraclePrice, marketBorrowData, marketLltv, position, collateralAmount, collateralDecimals, loanDecimals]);
@@ -157,7 +151,7 @@ export default function MarketOperationsModal({ marketKey }: MarketOperationsMod
 
   // Borrow rate from market data
   const borrowApy = selectedMarket?.state?.borrowApy != null
-    ? `${(selectedMarket.state.borrowApy * 100).toFixed(2)}%`
+    ? formatPercent(selectedMarket.state.borrowApy)
     : undefined;
 
   const activeValidation = marketTab === 'borrow' ? borrowValidation : repayValidation;
@@ -491,7 +485,7 @@ export default function MarketOperationsModal({ marketKey }: MarketOperationsMod
                 disabled={!canExecute}
               >
                 {isLoading ? (
-                  <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <Spinner />
                 ) : (
                   activeCtaLabel
                 )}
@@ -504,10 +498,10 @@ export default function MarketOperationsModal({ marketKey }: MarketOperationsMod
             </div>
 
             {status && statusKind !== 'idle' && (
-              <div className={`rounded-md p-3 ${statusStyles[statusKind]}`}>
+              <div className={`rounded-md p-3 ${STATUS_STYLES[statusKind]}`}>
                 <p className="text-xs">
                   {isLoading && (
-                    <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin mr-2 align-middle" />
+                    <Spinner className="w-3 h-3 mr-2 align-middle" />
                   )}
                   {status}
                 </p>

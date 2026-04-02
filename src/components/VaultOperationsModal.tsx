@@ -7,20 +7,13 @@ import { useSmartAccount } from '@/hooks/useSmartAccount';
 import { useVaults } from '@/hooks/useVaults';
 import { useVaultPosition } from '@/hooks/useVaultPosition';
 import { formatTokenAmount, formatVaultShares, getExplorerTxUrl, formatPercent, formatUsd } from '@/lib/utils';
-import { SIMULATE_ONLY_SENTINEL } from '@/lib/constants';
+import { SIMULATE_ONLY_SENTINEL, STATUS_STYLES } from '@/lib/constants';
 import { validateDepositAction, validateWithdrawAction } from '@/lib/validation';
 import { simulateVaultDeposit, simulateVaultWithdraw } from '@/lib/simulate';
 import { parseTokenAmount } from '@/lib/utils';
 import { Button } from './ui/Button';
+import { Spinner } from './ui/Spinner';
 import { ValueTransition } from './ui/ValueTransition';
-
-const statusStyles: Record<string, string> = {
-  success: 'bg-green-500/10 border border-green-500/20 text-green-400',
-  error: 'bg-red-500/10 border border-red-500/20 text-red-400',
-  processing: 'surface-elevated text-muted-foreground',
-  info: 'surface-elevated text-muted-foreground',
-  idle: 'surface-elevated text-muted-foreground',
-};
 
 interface VaultOperationsModalProps {
   vaultAddress: string;
@@ -61,7 +54,6 @@ export default function VaultOperationsModal({ vaultAddress }: VaultOperationsMo
   });
 
   const isAuthed = authenticated && !!address && isReady;
-  const isConnected = isAuthed;
   const [vaultTab, setVaultTab] = useState<'deposit' | 'withdraw'>('deposit');
   const [reviewMode, setReviewMode] = useState(false);
 
@@ -75,13 +67,13 @@ export default function VaultOperationsModal({ vaultAddress }: VaultOperationsMo
   // Validation
   const depositValidation = useMemo(() => validateDepositAction({
     depositAmount, assetDecimals,
-    assetBalance, isConnected, assetSymbol,
-  }), [depositAmount, assetDecimals, assetBalance, isConnected, assetSymbol]);
+    assetBalance, isConnected: isAuthed, assetSymbol,
+  }), [depositAmount, assetDecimals, assetBalance, isAuthed, assetSymbol]);
 
   const withdrawValidation = useMemo(() => validateWithdrawAction({
     withdrawAmount, shares,
-    maxWithdrawUsd: maxWithdrawUsd ?? 0, isConnected,
-  }), [withdrawAmount, shares, maxWithdrawUsd, isConnected]);
+    maxWithdrawUsd: maxWithdrawUsd ?? 0, isConnected: isAuthed,
+  }), [withdrawAmount, shares, maxWithdrawUsd, isAuthed]);
 
   // Vault simulation
   const vaultSim = useMemo(() => {
@@ -209,7 +201,7 @@ export default function VaultOperationsModal({ vaultAddress }: VaultOperationsMo
               </Button>
               <Button variant="accent" size="sm" className="flex-1" onClick={handleConfirm} disabled={isLoading}>
                 {isLoading ? (
-                  <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <Spinner />
                 ) : 'Confirm'}
               </Button>
             </div>
@@ -381,7 +373,7 @@ export default function VaultOperationsModal({ vaultAddress }: VaultOperationsMo
                 disabled={!canExecute}
               >
                 {isLoading ? (
-                  <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <Spinner />
                 ) : ctaLabel}
               </Button>
               {!activeValidation.isValid && activeValidation.disabledReason && (
@@ -392,10 +384,10 @@ export default function VaultOperationsModal({ vaultAddress }: VaultOperationsMo
             </div>
 
             {status && statusKind !== 'idle' && (
-              <div className={`rounded-md p-3 ${statusStyles[statusKind]}`}>
+              <div className={`rounded-md p-3 ${STATUS_STYLES[statusKind]}`}>
                 <p className="text-xs">
                   {isLoading && (
-                    <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin mr-2 align-middle" />
+                    <Spinner className="w-3 h-3 mr-2 align-middle" />
                   )}
                   {status}
                 </p>

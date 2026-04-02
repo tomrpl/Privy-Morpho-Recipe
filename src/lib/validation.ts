@@ -1,5 +1,5 @@
 import { parseUnits } from 'viem';
-import { WAD } from './constants';
+import { WAD, BORROW_SAFETY_BUFFER, BORROW_SAFETY_DIVISOR } from './constants';
 import { computeMaxBorrow, computeLTV, toAssetsUp, wMulDown, mulDivDown } from './morphoMath';
 
 export interface ValidationResult {
@@ -90,8 +90,7 @@ export function validateBorrowAction(input: BorrowValidationInput): ValidationRe
         input.position?.borrowShares ?? 0n,
         input.marketBorrowData.totalAssets, input.marketBorrowData.totalShares,
       );
-      // Apply 5% safety buffer
-      const safeBorrow = maxBorrow * 950n / 1000n;
+      const safeBorrow = maxBorrow * BORROW_SAFETY_BUFFER / BORROW_SAFETY_DIVISOR;
 
       if (borrowParsed > safeBorrow) {
         // Check if it's specifically over LLTV (not just over safe buffer)

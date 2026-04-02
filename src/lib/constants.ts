@@ -26,3 +26,14 @@ export const SLIPPAGE_TOLERANCE_BPS = 100n;
 export const REPAY_APPROVAL_BUFFER_BPS = 50n;
 export const INFINITE_HEALTH_FACTOR = WAD * 100n;
 export const SIMULATE_ONLY_SENTINEL = 'simulate-only' as const;
+
+export const BORROW_SAFETY_BUFFER = 950n; // 95% of max (5% buffer)
+export const BORROW_SAFETY_DIVISOR = 1000n;
+
+export const STATUS_STYLES: Record<string, string> = {
+  success: 'bg-green-500/10 border border-green-500/20 text-green-400',
+  error: 'bg-red-500/10 border border-red-500/20 text-red-400',
+  processing: 'surface-elevated text-muted-foreground',
+  info: 'surface-elevated text-muted-foreground',
+  idle: 'surface-elevated text-muted-foreground',
+};

@@ -9,6 +9,8 @@ import {
   MORPHO_CORE_ABI,
   MORPHO_ORACLE_ABI,
   REPAY_APPROVAL_BUFFER_BPS,
+  BORROW_SAFETY_BUFFER,
+  BORROW_SAFETY_DIVISOR,
 } from '@/lib/constants';
 
 import {
@@ -62,8 +64,6 @@ interface MarketInfo {
   selectedMarketKey: string;
 }
 
-const BORROW_SAFETY_BUFFER = 950n; // 95% of max (5% buffer)
-
 export function useMarketPosition(market: MarketInfo) {
   const { sendBatchTransaction, sendSingleTransaction, isReady, address } = useSmartAccount();
   const publicClient = usePublicClient();
@@ -107,13 +107,6 @@ export function useMarketPosition(market: MarketInfo) {
 
   const explorerUrl = selectedChain.blockExplorers?.default?.url ?? '';
   const isConnected = !!(address && isReady);
-
-  // Auto-clear status after 10 seconds when not loading
-  useEffect(() => {
-    if (!status || isLoading) return;
-    const timer = setTimeout(() => resetTxState(), 10_000);
-    return () => clearTimeout(timer);
-  }, [status, isLoading, resetTxState]);
 
   // --- Computed values ---
 
@@ -360,62 +353,53 @@ export function useMarketPosition(market: MarketInfo) {
     if (!silent) setStatus('Fetching position...', 'processing');
 
     try {
-      const positionData = await publicClient.readContract({
-        address: MORPHO_CORE_ADDRESS,
-        abi: MORPHO_CORE_ABI,
-        functionName: 'position',
-        args: [marketId, address as `0x${string}`],
-      });
+      // Parallelize all three independent RPC reads
+      const [positionData, marketData, fetchedPrice] = await Promise.all([
+        publicClient.readContract({
+          address: MORPHO_CORE_ADDRESS,
+          abi: MORPHO_CORE_ABI,
+          functionName: 'position',
+          args: [marketId, address as `0x${string}`],
+        }),
+        publicClient.readContract({
+          address: MORPHO_CORE_ADDRESS,
+          abi: MORPHO_CORE_ABI,
+          functionName: 'market',
+          args: [marketId],
+        }),
+        publicClient.readContract({
+          address: oracleAddress,
+          abi: MORPHO_ORACLE_ABI,
+          functionName: 'price',
+        }),
+      ]);
 
       const [supplyShares, borrowShares, collateral] = positionData as [bigint, bigint, bigint];
       setPosition({ supplyShares, borrowShares, collateral });
 
-      // Always fetch oracle + market data (needed for simulation even without collateral)
-      try {
-        const [marketData, fetchedPrice] = await Promise.all([
-          publicClient.readContract({
-            address: MORPHO_CORE_ADDRESS,
-            abi: MORPHO_CORE_ABI,
-            functionName: 'market',
-            args: [marketId],
-          }),
-          publicClient.readContract({
-            address: oracleAddress,
-            abi: MORPHO_ORACLE_ABI,
-            functionName: 'price',
-          }),
-        ]);
+      const price = fetchedPrice as bigint;
+      setOraclePrice(price);
 
-        const price = fetchedPrice as bigint;
-        setOraclePrice(price);
+      const [, , totalBorrowAssets, totalBorrowShares] = marketData as [bigint, bigint, bigint, bigint, bigint, bigint];
+      setMarketBorrowData({ totalAssets: totalBorrowAssets, totalShares: totalBorrowShares });
 
-        const [, , totalBorrowAssets, totalBorrowShares] = marketData as [bigint, bigint, bigint, bigint, bigint, bigint];
-        setMarketBorrowData({ totalAssets: totalBorrowAssets, totalShares: totalBorrowShares });
-
-        if (price === 0n || collateral === 0n) {
-          setHealthFactor(null);
-          setLiquidationPrice(null);
-        } else if (borrowShares > 0n) {
-          const hf = computeHealthFactor(
-            collateral, borrowShares, price, marketLltv,
-            totalBorrowAssets, totalBorrowShares,
-          );
-          setHealthFactor(hf);
-          const liqPrice = computeLiquidationPrice(
-            collateral, borrowShares, marketLltv,
-            totalBorrowAssets, totalBorrowShares,
-          );
-          setLiquidationPrice(liqPrice);
-        } else {
-          setHealthFactor(null);
-          setLiquidationPrice(null);
-        }
-      } catch (err) {
-        console.error('Failed to fetch oracle/market data:', err);
+      if (price === 0n || collateral === 0n) {
         setHealthFactor(null);
         setLiquidationPrice(null);
-        setOraclePrice(null);
-        setMarketBorrowData(null);
+      } else if (borrowShares > 0n) {
+        const hf = computeHealthFactor(
+          collateral, borrowShares, price, marketLltv,
+          totalBorrowAssets, totalBorrowShares,
+        );
+        setHealthFactor(hf);
+        const liqPrice = computeLiquidationPrice(
+          collateral, borrowShares, marketLltv,
+          totalBorrowAssets, totalBorrowShares,
+        );
+        setLiquidationPrice(liqPrice);
+      } else {
+        setHealthFactor(null);
+        setLiquidationPrice(null);
       }
 
       if (!silent) {

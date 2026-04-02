@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export type StatusKind = 'idle' | 'processing' | 'success' | 'error' | 'info';
 
@@ -55,6 +55,13 @@ export function useTxLifecycle() {
       setIsLoading(false);
     }
   }, []);
+
+  // Auto-clear status after 10 seconds when not loading
+  useEffect(() => {
+    if (!status || isLoading) return;
+    const timer = setTimeout(() => resetTxState(), 10_000);
+    return () => clearTimeout(timer);
+  }, [status, isLoading, resetTxState]);
 
   return { status, statusKind, setStatus, txHash, setTxHash, isLoading, executeTx, resetTxState };
 }
