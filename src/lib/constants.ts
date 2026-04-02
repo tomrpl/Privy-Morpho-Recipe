@@ -1,14 +1,12 @@
 import { parseAbi } from 'viem';
+import { blueAbi, metaMorphoAbi, blueOracleAbi } from '@morpho-org/blue-sdk-viem';
 
-// Contract Addresses
-export const MORPHO_VAULT_ADDRESS = '0xBeeFa74640a5f7c28966cbA82466EED5609444E0' as const;
-export const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
+export const MORPHO_CORE_ADDRESS = '0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb' as const;
 
-// Chain Configuration
-export const BASE_CHAIN_ID = 8453;
-export const BASE_EXPLORER_URL = 'https://basescan.org';
+export const MORPHO_CORE_ABI = blueAbi;
+export const MORPHO_VAULT_ABI = metaMorphoAbi;
+export const MORPHO_ORACLE_ABI = blueOracleAbi;
 
-// ABIs
 export const ERC20_ABI = parseAbi([
   'function approve(address spender, uint256 amount) external returns (bool)',
   'function allowance(address owner, address spender) external view returns (uint256)',
@@ -19,17 +17,23 @@ export const ERC20_ABI = parseAbi([
   'function name() external view returns (string)',
 ]);
 
-export const MORPHO_VAULT_ABI = parseAbi([
-  'function deposit(uint256 assets, address receiver) external returns (uint256 shares)',
-  'function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets)',
-  'function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares)',
-  'function balanceOf(address owner) external view returns (uint256)',
-  'function totalAssets() external view returns (uint256)',
-  'function totalSupply() external view returns (uint256)',
-  'function convertToShares(uint256 assets) external view returns (uint256)',
-  'function convertToAssets(uint256 shares) external view returns (uint256)',
-]);
-
-// Token Decimals
-export const USDC_DECIMALS = 6;
+export const ORACLE_PRICE_SCALE = 10n ** 36n;
+export const VIRTUAL_SHARES = 10n ** 6n;
+export const VIRTUAL_ASSETS = 1n;
+export const WAD = 10n ** 18n;
 export const VAULT_SHARES_DECIMALS = 18;
+export const SLIPPAGE_TOLERANCE_BPS = 100n;
+export const REPAY_APPROVAL_BUFFER_BPS = 50n;
+export const INFINITE_HEALTH_FACTOR = WAD * 100n;
+export const SIMULATE_ONLY_SENTINEL = 'simulate-only' as const;
+
+export const BORROW_SAFETY_BUFFER = 950n; // 95% of max (5% buffer)
+export const BORROW_SAFETY_DIVISOR = 1000n;
+
+export const STATUS_STYLES: Record<string, string> = {
+  success: 'bg-green-500/10 border border-green-500/20 text-green-400',
+  error: 'bg-red-500/10 border border-red-500/20 text-red-400',
+  processing: 'surface-elevated text-muted-foreground',
+  info: 'surface-elevated text-muted-foreground',
+  idle: 'surface-elevated text-muted-foreground',
+};

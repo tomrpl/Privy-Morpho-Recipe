@@ -1,140 +1,117 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
-import Image from 'next/image';
-import MorphoVaultComponent from '../components/MorphoVaultComponent';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Layers, Fuel, Mail, ArrowLeftRight, Activity } from 'lucide-react';
+import ProtocolStack from '../components/ProtocolStack';
+
+const features = [
+  {
+    icon: Layers,
+    title: 'Batch Transactions',
+    description: 'Approve + Supply + Borrow in 1 click. Smart wallets combine multiple operations into a single atomic transaction.',
+  },
+  {
+    icon: Fuel,
+    title: 'Gas Sponsorship',
+    description: 'Users never need ETH for gas. Paymaster-sponsored transactions remove the biggest onboarding barrier.',
+    optional: true,
+  },
+  {
+    icon: Mail,
+    title: 'Embedded Wallets',
+    description: 'Email login to DeFi lending in 30 seconds. No seed phrases, no extensions, no friction.',
+  },
+  {
+    icon: ArrowLeftRight,
+    title: 'Earn + Borrow',
+    description: 'Full Morpho protocol coverage. Vault deposits for yield, Markets for collateralized borrowing.',
+  },
+  {
+    icon: Activity,
+    title: 'Health Monitoring',
+    description: 'Server-side position monitoring with Privy server wallets. Track health factors and alert users before liquidation — 24/7 automated risk management.',
+    narrative: true,
+    optional: true,
+  },
+];
 
 export default function Home() {
-  const { ready, authenticated, user, login, logout } = usePrivy();
-
-  if (!ready) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-4">
-        {/* Header */}
-        <div className="text-center mb-4">
-          <div className="bg-[#2973FF] rounded-xl p-6 mb-4 max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-6">
-              <Image 
-                src="/privy-logo-dark.png" 
-                alt="Privy Logo" 
-                width={120}
-                height={40}
-                className="h-10 w-auto"
-              />
-              <span className="text-white text-2xl ">×</span>
-              <Image 
-                src="/Morpho.svg" 
-                alt="Morpho Logo" 
-                width={120}
-                height={40}
-                className="h-10 w-auto"
-              />
-            </div>
-          </div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          One-click yield, secured by Privy, powered by Morpho.
+    <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+        className="grid md:grid-cols-2 gap-16 items-start"
+      >
+        <div className="max-w-md">
+          <h1 className="text-4xl md:text-5xl font-medium tracking-tighter leading-[1.1] mb-6">
+            Secure Liquidity.
+            <br />
+            <span className="text-muted-foreground">Optimized Yield.</span>
+          </h1>
+          <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-sm">
+            A high-performance recipe combining Privy&apos;s secure wallet infrastructure with
+            Morpho&apos;s hyper-efficient lending markets.
           </p>
-          <div className="flex justify-center items-center mt-6 gap-4">
-            
-            {ready && (
-              <div>
-                {authenticated ? (
-                  <button 
-                    onClick={logout}
-                    className="bg-[#2973FF] text-white px-4 py-2 rounded-xl transition-colors whitespace-nowrap hover:bg-[#5792FF]"
-                    style={{ width: '110px' }}
-                  >
-                    Log Out
-                  </button>
-                ) : (
-                  <button 
-                    onClick={login}
-                    className="bg-[#2973FF] text-white px-4 py-2 rounded-xl transition-colors whitespace-nowrap hover:bg-[#5792FF]"
-                    style={{ width: '100px' }}
-                  >
-                    Log In
-                  </button>
-                )}
-              </div>
-            )}
+          <div className="flex gap-3">
+            <Link
+              href="/earn"
+              className="h-12 px-8 bg-foreground text-background font-medium rounded-md hover:bg-foreground/90 transition-all duration-150 active:scale-[0.98] inline-flex items-center"
+            >
+              Test Earn Product
+            </Link>
+            <Link
+              href="/borrow"
+              className="h-12 px-8 border border-white/[0.08] bg-transparent hover:bg-white/[0.05] text-foreground font-medium rounded-md transition-all duration-150 active:scale-[0.98] inline-flex items-center"
+            >
+              Test Borrow Product
+            </Link>
           </div>
         </div>
+        <ProtocolStack />
+      </motion.section>
 
-
-
-        {/* Main Content */}
-        {authenticated && user && (
-          <div className="max-w-4xl mx-auto">
-            
-            <MorphoVaultComponent />
-          </div>
-        )}
-
-        {!authenticated && (
-          <div className="text-center max-w-md mx-auto">
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">Get Started</h2>
-              <p className="text-gray-600 mb-6">
-                Connect your wallet to start earning yield on your USDC
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
-                <p className="font-medium mb-2">What you&apos;ll need:</p>
-                <ul className="space-y-1">
-                  <li>• USDC on Base network</li>
-                  <li>• A few clicks to start earning</li>
-                                     <li>• That&apos;s it! 🚀</li>
-                </ul>
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
+        className="mt-20"
+      >
+        <h2 className="text-label mb-6">Why Privy + Morpho</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {features.map((feature, i) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + i * 0.1, duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+              className={`surface-card p-5 hover-lift group ${feature.narrative ? 'sm:col-span-2 lg:col-span-1 border-accent/10' : ''}`}
+            >
+              <div className="flex items-start gap-3">
+                <feature.icon className="text-muted-foreground mt-0.5 shrink-0" size={16} strokeWidth={1.5} />
+                <div>
+                  <h3 className="text-sm font-medium text-foreground mb-1">{feature.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{feature.description}</p>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {feature.optional && (
+                      <span className="inline-block text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-400 font-medium">
+                        Optional — needs implementation
+                      </span>
+                    )}
+                    {feature.narrative && (
+                      <span className="inline-block text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium">
+                        Privy Server Wallets
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Footer */}
-        <div className="mt-16 text-center space-y-4">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
-            <p className="text-sm text-yellow-800">
-              <span className="font-semibold">📚 Educational Example:</span> This is a demo application for learning purposes. 
-              Always exercise caution when interacting with real smart contracts and funds.
-            </p>
-          </div>
-          
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">
-              Need help? Check out the documentations:
-            </p>
-            <div className="flex justify-center gap-6">
-              <a 
-                href="https://docs.privy.io/basics/get-started/about" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline text-sm"
-              >
-                Privy Documentation
-              </a>
-              <span className="text-gray-300">•</span>
-              <a 
-                href="https://docs.morpho.org" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline text-sm"
-              >
-                Morpho Documentation
-              </a>
-            </div>
-          </div>
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </motion.section>
     </div>
   );
 }

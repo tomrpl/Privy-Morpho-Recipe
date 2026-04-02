@@ -1,282 +1,152 @@
-# Privy × Morpho: DeFi Yield Integration Demo
+# Privy x Morpho: DeFi Lending Recipe
 
-A comprehensive example demonstrating how to integrate **Privy's embedded wallets** with **Morpho Vaults** to enable seamless DeFi yield generation for your users.
+A developer recipe demonstrating how to integrate **Privy's embedded wallets** with **Morpho's lending protocol** to build Earn and Borrow products.
 
-## 🚨 Disclaimer
+## Disclaimer
 
-This repository is an **educational demonstration** designed to showcase integration patterns between Privy and Morpho protocols. While the code is functional, it is intended for learning purposes and should **not be used in production without proper security audits, testing, and risk assessment**.
+This is an **educational demonstration** showcasing integration patterns between Privy and Morpho. It is functional but intended for learning purposes. **Do not use in production without security audits, testing, and risk assessment.**
 
-**⚠️ Important Notes:**
-- This facilitates the Privy-Morpho integration for educational purposes
 - Always exercise caution when interacting with real smart contracts and funds
-- Conduct thorough testing on testnets before mainnet deployment
+- Test on testnets before mainnet deployment
 - Consider professional security audits for production applications
 
-## 📋 Table of Contents
+## Overview
 
-- [Overview](#-overview)
-- [Prerequisites](#-prerequisites)
-- [How It Works](#-how-it-works)
-- [Key Integration Considerations](#-key-integration-considerations)
-- [Screenshots](#-screenshots)
-- [Technical Implementation](#-technical-implementation)
-- [Security Considerations](#-security-considerations)
-- [Extensibility](#-extensibility)
-- [Resources](#-resources)
-- [Getting Started](#-getting-started)
-- [License](#-license)
+This project demonstrates how to build a **one-click DeFi lending application** combining:
 
-## 🎯 Overview
+- **[Privy](https://privy.io)** — Embedded wallet infrastructure for seamless user onboarding
+- **[Morpho](https://morpho.org)** — Hyper-efficient lending markets and vault yield optimization
+- **Multi-chain** — Supports Ethereum, Base, Arbitrum, Polygon, Optimism, and more
 
-This project demonstrates how to build a **one-click DeFi yield application** that combines:
+### What's Built
 
-- **[Privy](https://privy.io)**: Embedded wallet infrastructure for seamless user onboarding
-- **[Morpho](https://morpho.org)**: Automated yield optimization across lending markets
-- **Base Network**: Layer 2 solution for cost-effective transactions
-
-The goal is to highlight **Earn recipes** that developers can leverage when integrating Morpho vaults with Privy's wallet infrastructure, enabling users to earn yield on their crypto assets with minimal friction.
+- **Earn Product** — Browse and deposit into Morpho vaults across chains. Real-time APY, TVL, and position tracking with value transitions on deposit/withdraw.
+- **Borrow Product** — Browse top 50 markets, supply collateral, borrow assets. Full position simulation with LTV, health factor, liquidation price, and review step before execution.
 
 ### Key Features
 
-- 🔐 **Privy Authentication**: Social login, email, or wallet connection
-- 💰 **USDC Vault Integration**: Deposit into Morpho's yield-generating vaults
-- 📊 **Real-time Data**: Live vault metrics via Morpho's GraphQL API
-- 🔄 **Full Cycle**: Approve, deposit, track, and withdraw functionality
-- 📱 **Responsive UI**: Modern, intuitive interface for DeFi interactions
+- Privy wallet authentication (social login, email, or external wallet)
+- Multi-vault and multi-market support via Morpho's GraphQL API
+- Batch transactions (approve + supply + borrow in one flow)
+- Real-time position simulation with before/after projections
+- Input validation with clear disabled reasons
+- Review step before wallet execution
+- Responsive split-view UI (table + action panel)
 
-## 📚 Prerequisites
+## Prerequisites
 
-Before implementing this integration, ensure you have:
-
-- **Node.js 18+** and **npm/yarn**
+- **Node.js 18+** and **yarn**
 - **Privy App ID** from the [Privy Dashboard](https://dashboard.privy.io)
-- **Base Network** understanding (Layer 2 Ethereum)
-- **Basic DeFi knowledge** (ERC-20 tokens, vault concepts)
-- **USDC on Base** for testing functionality
+- **Basic DeFi knowledge** (ERC-20 tokens, lending markets, vaults)
 
-## 🔧 How It Works
+## Getting Started
 
-### 1. **User Authentication**
-- Users connect via Privy's embedded wallet system
-- Supports email, social login, or external wallet connection
-- Automatic wallet creation and management
-
-### 2. **Vault Integration**
-- Connects to Morpho's **Steakhouse USDC Vault** on Base
-- Implements ERC-4626 standard for vault interactions
-- Real-time price and APY data via GraphQL API
-
-### 3. **Transaction Flow**
-```
-User Login → Approve USDC → Deposit to Vault → Earn Yield → Withdraw
-```
-
-### 4. **Smart Contract Interactions**
-- **ERC-20 Approval**: Grant vault permission to transfer USDC
-- **Vault Deposit**: Convert USDC to vault shares
-- **Balance Tracking**: Monitor user's vault positions
-- **Withdrawal**: Redeem shares back to USDC
-
-## ⚠️ Key Integration Considerations
-
-### For Privy Integration:
-
-1. **Wallet Management**
-   - Handle multiple wallet types (embedded, external)
-   - Implement proper wallet switching for Base network
-   - Manage wallet connection states gracefully
-
-2. **Transaction Handling**
-   - Use `encodeFunctionData` for contract interactions
-   - Handle gas estimation and transaction confirmation
-   - Implement proper error handling for failed transactions
-
-3. **User Experience**
-   - Provide clear feedback during transaction processing
-   - Show meaningful error messages for common issues
-   - Implement loading states and transaction status updates
-
-### For Morpho Integration:
-
-1. **Vault Selection**
-   - Choose appropriate vaults based on risk/reward profile
-   - Verify vault legitimacy and curator reputation
-   - Monitor vault capacity and liquidity constraints
-
-2. **ERC-4626 Compliance**
-   - Understand the difference between `deposit/mint` and `withdraw/redeem`
-   - Handle share price fluctuations correctly
-   - Account for potential slippage in vault operations
-
-3. **Data Fetching**
-   - Use Morpho's GraphQL API for real-time vault data
-   - Implement proper error handling for API failures
-   - Cache data appropriately to avoid rate limiting
-
-## 📸 Screenshots
-
-### Log In:
-![Log In](public/steps/login.png)
-
-Click on the Log In button, 
-
-### Select your privy authentification method
-![Privy Authentication](public/steps/privy.png)
-
-### Play with Morpho Vaults
-![Morpho Vaults](public/steps/vault-plugged.png)
-
-## 🛠️ Technical Implementation
-
-### Core Components
-
-1. **`MorphoVaultComponent.tsx`**
-   - Main vault interaction interface
-   - Handles deposits, withdrawals, and balance checking
-   - Integrates with Morpho's GraphQL API
-
-2. **`constants.ts`**
-   - Contract addresses and ABIs
-   - Chain configuration
-   - Token decimal settings
-
-3. **`utils.ts`**
-   - Formatting functions for amounts and addresses
-   - BigInt handling utilities
-   - Transaction URL generation
-
-### Key Functions
-
-```typescript
-// Deposit USDC into Morpho Vault
-const handleDeposit = async () => {
-  const amount = parseUsdcAmount(depositAmount);
-  const data = encodeFunctionData({
-    abi: MORPHO_VAULT_ABI,
-    functionName: 'deposit',
-    args: [amount, wallet.address]
-  });
-  // Execute transaction...
-};
-
-// Withdraw from vault
-const handleWithdraw = async () => {
-  const data = encodeFunctionData({
-    abi: MORPHO_VAULT_ABI,
-    functionName: 'redeem',
-    args: [shares, wallet.address, wallet.address]
-  });
-  // Execute transaction...
-};
-```
-
-### Integration Pattern
-
-```typescript
-// 1. Initialize Privy
-const { ready, authenticated, user } = usePrivy();
-
-// 2. Get wallet provider
-const provider = await wallet.getEthereumProvider();
-
-// 3. Switch to Base network
-await wallet.switchChain(BASE_CHAIN_ID);
-
-// 4. Execute contract interaction
-const hash = await provider.request({
-  method: 'eth_sendTransaction',
-  params: [{ from: wallet.address, to: CONTRACT_ADDRESS, data }]
-});
-```
-
-## 🔒 Security Considerations
-
-### Smart Contract Risks
-- **Vault Security**: Morpho vaults are subject to smart contract risks
-- **Approval Management**: Unlimited approvals pose potential security risks
-- **Network Risks**: Base network and bridge security considerations
-
-### Integration Security
-- **Input Validation**: Sanitize all user inputs and amounts
-- **Error Handling**: Implement comprehensive error catching
-- **State Management**: Prevent race conditions in transaction handling
-
-### Best Practices
-- **Testing**: Thorough testing on testnets before mainnet
-- **Monitoring**: Implement transaction monitoring and alerting
-- **Updates**: Keep dependencies and contracts updated
-
-## 🌐 Extensibility
-
-### Multi-Chain Support
-This integration pattern can be extended to **any chain where Morpho is supported**:
-
-- **Ethereum Mainnet**: Original Morpho deployment
-- **Base**: Current implementation (Layer 2)
-- **Future Chains**: Easily adaptable to new Morpho deployments
-
-### Vault Flexibility
-**Any Morpho vault** can be integrated by:
-
-1. **Updating Contract Address**: Change `MORPHO_VAULT_ADDRESS` in constants
-2. **Adjusting Asset Configuration**: Update token addresses and decimals
-3. **Modifying Chain Settings**: Update `BASE_CHAIN_ID` and explorer URLs
-
-### Example Extension
-```typescript
-// Add new vault support
-const WETH_VAULT_ADDRESS = '0x...'; // Different vault
-const WETH_ADDRESS = '0x...'; // Different asset
-const ARBITRUM_CHAIN_ID = 42161; // Different chain
-```
-
-## 📖 Resources
-
-### Documentation
-- **[Privy Documentation](https://docs.privy.io/basics/get-started/about)**: Complete integration guide
-- **[Morpho Documentation](https://docs.morpho.org)**: Protocol overview and API reference
-- **[Privy Swap Recipe](https://docs.privy.io/recipes/swap-with-0x)**: Additional integration patterns
-
-### APIs and Tools
-- **[Morpho GraphQL API](https://api.morpho.org/graphql)**: Real-time vault data
-- **[Morpho App](https://app.morpho.org)**: Vault discovery and analytics
-- **[Base Documentation](https://docs.base.org)**: Layer 2 network details
-
-### Community
-- **[Privy Dev Support](https://privy-developers.slack.com/join/shared_invite/zt-38tepciub-AV_qKZndFsKBmeskxBshlw#/shared-invite/email)**: Developer support and discussions
-- **[Morpho Discord](https://discord.gg/morpho)**: Protocol updates and community
-
-## 🚀 Getting Started
-
-### 1. Clone and Install
 ```bash
-git clone <repository-url>
-cd privy-earn-app
-npm install
+git clone https://github.com/anthropics/privy-morpho-recipe.git
+cd privy-morpho-recipe
+yarn install
 ```
 
-### 2. Environment Setup
+Create `.env.local`:
+
 ```bash
-# Create .env.local
 NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
 ```
 
-### 3. Run Development Server
+Run the development server:
+
 ```bash
-npm run dev
+yarn dev
 ```
 
-### 4. Test the Integration
-- Connect wallet via Privy
-- Ensure Base network connection
-- Test with small USDC amounts first
+## Screenshots
 
-## 📄 License
+<!-- Replace these with your own screenshots -->
+_Screenshots will be added here._
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Architecture
+
+### Core Components
+
+| Component | Purpose |
+|-----------|---------|
+| `MarketOperationsModal` | Borrow/repay panel with simulation, validation, and review step |
+| `VaultOperationsModal` | Deposit/withdraw panel with value transitions and review step |
+| `MarketTable` | Top 50 markets by size with rate, utilization, and liquidity |
+| `VaultTable` | Top 20 vaults by TVL with APY breakdown and curator info |
+| `SimulationSummary` | Before/after position projections (collateral, debt, LTV, HF) |
+| `ReviewStep` | Inline transaction review before wallet execution |
+
+### Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `useMarketPosition` | Borrow position state, simulation, validation, transaction handlers |
+| `useVaultPosition` | Vault deposit/withdraw state, slippage detection, safety checks |
+| `useMarkets` / `useVaults` | GraphQL data fetching and market/vault selection |
+| `useSmartAccount` | Privy wallet integration for transaction signing |
+| `useTxLifecycle` | Transaction state machine (processing, success, error) |
+
+### Data Flow
+
+```
+Morpho GraphQL API → Apollo Client → useMarkets/useVaults hooks
+                                         ↓
+User selects market/vault → useMarketPosition/useVaultPosition hooks
+                                         ↓
+On-chain reads (viem) → Position, oracle price, market data
+                                         ↓
+Simulation engine → Projected LTV, HF, liquidation price
+                                         ↓
+Validation engine → CTA state, disabled reasons
+                                         ↓
+Review step → Wallet execution via Privy
+```
+
+### Libraries
+
+| Library | Purpose |
+|---------|---------|
+| `@privy-io/react-auth` | Wallet authentication and embedded wallets |
+| `@morpho-org/blue-sdk-viem` | Morpho contract ABIs and types |
+| `@apollo/client` | GraphQL data fetching from Morpho API |
+| `wagmi` + `viem` | Blockchain interactions and contract calls |
+| `framer-motion` | UI animations |
+
+## Extending This Recipe
+
+### Adding a New Chain
+
+The app already supports multiple chains. To add a new Morpho deployment:
+
+1. Add the chain to `CHAIN_ID_MAP` in `src/context/ChainContext.tsx`
+2. Add the chain config to `wagmiConfig` in `src/app/providers.tsx`
+3. The GraphQL API will automatically include markets/vaults on the new chain
+
+### Optional Features (Not Yet Implemented)
+
+- **Gas Sponsorship** — Privy paymaster integration for gasless transactions
+- **Health Monitoring** — Server-side position monitoring with Privy server wallets
+
+## Security Considerations
+
+- Morpho vaults and markets are subject to smart contract risks
+- ERC-20 approvals are scoped to the specific transaction amount
+- Input validation prevents unsafe positions (LTV checks, balance checks)
+- Health factor simulation warns before liquidation-risk actions
+- Always test with small amounts first
+
+## Resources
+
+- [Privy Documentation](https://docs.privy.io)
+- [Morpho Documentation](https://docs.morpho.org)
+- [Morpho GraphQL API](https://blue-api.morpho.org/graphql)
+- [Morpho App](https://app.morpho.org)
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built with ❤️ to demonstrate the power of Privy × Morpho integration**
-
-*Remember: This is an educational demonstration. Always conduct proper due diligence and testing before deploying to production.*
+Built to demonstrate the power of Privy x Morpho integration.
